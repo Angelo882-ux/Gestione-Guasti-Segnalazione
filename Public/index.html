@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="it">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#f5f6f2" />
+		<title>ProntoDesk | Assistenza tecnica</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+		<link rel="stylesheet" href="/style.css" />
+		<script src="/app.js" defer></script>
+	</head>
+	<body>
+		<div class="app-shell">
+			<aside class="sidebar">
+				<a class="brand" href="#dashboard" aria-label="ProntoDesk, panoramica">
+					<span class="brand-mark">p.</span>
+					<span>pronto<span class="brand-light">desk</span></span>
+				</a>
+				<div class="workspace-label">AREA TEAM</div>
+				<nav class="primary-nav" aria-label="Navigazione principale">
+					<button class="nav-link staff-only hidden" data-view="dashboard"><span class="nav-icon">◫</span>Panoramica</button>
+					<button class="nav-link staff-only hidden" data-view="tickets"><span class="nav-icon">▤</span>Segnalazioni<span class="nav-count" id="nav-count">0</span></button>
+					<button class="nav-link staff-only hidden" data-view="appointments"><span class="nav-icon">▦</span>Prenotazioni</button>
+					<button class="nav-link staff-only hidden" data-view="projects"><span class="nav-icon">◈</span>Progetti<span class="nav-count" id="project-count">0</span></button>
+				</nav>
+				<div class="sidebar-divider"></div>
+				<div class="workspace-label">AREA SERVIZI</div>
+				<button class="nav-link is-active" data-view="client" data-request-type="Guasto"><span class="nav-icon">⚒</span>Segnala un guasto</button>
+				<button class="nav-link" data-view="client" data-request-type="Bug"><span class="nav-icon">⌘</span>Segnala un bug</button>
+				<button class="nav-link" data-view="client" data-request-type="Progetto"><span class="nav-icon">◈</span>Proponi un progetto</button>
+				<button class="nav-link" data-view="client" data-request-type="Supporto"><span class="nav-icon">◉</span>Richiedi supporto</button>
+				<div class="workspace-label staff-only hidden">STRUMENTI</div>
+				<button class="nav-link staff-only hidden" data-view="assistant"><span class="nav-icon">✳</span>Assistente tecnico</button>
+				<div class="sidebar-bottom">
+					<div class="online-indicator"><span></span>Archivio locale attivo</div>
+					<div class="operator-profile">
+						<div class="profile-avatar">PD</div>
+						<div><strong>Team assistenza</strong><small>Console operativa</small></div>
+						<span class="profile-menu">···</span>
+					</div>
+				</div>
+			</aside>
+
+			<main class="main-area">
+				<header class="topbar">
+					<div class="breadcrumb"><span>Assistenza</span><span class="breadcrumb-separator">/</span><strong id="breadcrumb-current">Panoramica</strong></div>
+					<div class="topbar-actions">
+						<span class="today-label" id="today-label"></span>
+						<button class="button button-outline button-small" id="admin-login-trigger">Accesso amministratore</button>
+						<div class="admin-session hidden" id="admin-session"><span id="admin-username"></span><button class="button button-outline button-small" id="admin-logout">Esci</button></div>
+					</div>
+				</header>
+
+				<section class="view is-visible" id="view-dashboard">
+					<div class="page-heading">
+						<div><p class="eyebrow">CENTRO OPERATIVO</p><h1>Buongiorno, team.</h1><p class="page-subtitle">Ecco cosa succede oggi nell’assistenza.</p></div>
+						<button class="button button-outline" data-view="tickets">Vedi tutte le segnalazioni <span>↗</span></button>
+					</div>
+					<div class="metric-grid" id="metric-grid"></div>
+					<div class="dashboard-grid">
+						<section class="panel queue-panel">
+							<div class="panel-heading"><div><p class="eyebrow">DA PRENDERE IN CARICO</p><h2>Segnalazioni recenti</h2></div><button class="text-button" data-view="tickets">Apri coda <span>→</span></button></div>
+							<div class="table-scroll"><table><thead><tr><th>CLIENTE / DISPOSITIVO</th><th>PROBLEMA</th><th>PRIORITÀ</th><th>STATO</th></tr></thead><tbody id="recent-tickets"></tbody></table></div>
+							<div class="empty-state hidden" id="dashboard-empty"><span class="empty-icon">✓</span><strong>Tutto sotto controllo</strong><p>Le nuove segnalazioni compariranno qui.</p></div>
+						</section>
+						<section class="panel upcoming-panel">
+							<div class="panel-heading"><div><p class="eyebrow">AGENDA</p><h2>Prossimi appuntamenti</h2></div><button class="icon-button" data-view="appointments" aria-label="Apri agenda">↗</button></div>
+							<div class="appointment-preview" id="upcoming-appointments"></div>
+							<div class="empty-state hidden" id="upcoming-empty"><span class="empty-icon">▦</span><strong>Nessun appuntamento</strong><p>Le prenotazioni appariranno qui.</p></div>
+						</section>
+					</div>
+				</section>
+
+				<section class="view" id="view-tickets">
+					<div class="page-heading"><div><p class="eyebrow">GESTIONE RICHIESTE</p><h1>Segnalazioni</h1><p class="page-subtitle">Assegna il lavoro e tieni aggiornato ogni cliente.</p></div><button class="button button-primary" data-view="client"><span>＋</span> Nuova segnalazione</button></div>
+					<section class="panel list-panel">
+						<div class="list-toolbar"><label class="search-field"><span>⌕</span><input id="ticket-search" type="search" placeholder="Cerca cliente o problema" /></label><label class="filter-field"><span class="sr-only">Filtra per stato</span><select id="status-filter"><option value="Tutte">Tutti gli stati</option><option>Nuova</option><option>In lavorazione</option><option>In attesa</option><option>Risolta</option></select></label><span class="result-count" id="result-count"></span></div>
+						<div class="table-scroll"><table class="ticket-table"><thead><tr><th>CLIENTE</th><th>SEGNALAZIONE</th><th>PRIORITÀ</th><th>ASSEGNATA A</th><th>STATO</th></tr></thead><tbody id="all-tickets"></tbody></table></div>
+						<div class="empty-state hidden" id="tickets-empty"><span class="empty-icon">▤</span><strong>Nessun risultato</strong><p>Prova a cambiare i filtri o registra una nuova segnalazione.</p></div>
+					</section>
+				</section>
+
+				<section class="view" id="view-projects">
+					<div class="page-heading"><div><p class="eyebrow">INIZIATIVE E MIGLIORAMENTI</p><h1>Progetti</h1><p class="page-subtitle">Raccogli idee e richieste di nuovi strumenti in una coda dedicata.</p></div><button class="button button-primary" data-view="client" data-request-type="Progetto"><span>＋</span> Nuovo progetto</button></div>
+					<section class="panel list-panel"><div class="list-toolbar"><label class="search-field"><span>⌕</span><input id="project-search" type="search" placeholder="Cerca progetto o referente" /></label><span class="result-count" id="project-result-count"></span></div><div class="table-scroll"><table class="ticket-table"><thead><tr><th>REFERENTE</th><th>PROGETTO</th><th>PRIORITÀ</th><th>ASSEGNATA A</th><th>STATO</th></tr></thead><tbody id="project-tickets"></tbody></table></div><div class="empty-state hidden" id="projects-empty"><span class="empty-icon">◈</span><strong>Nessun progetto ancora</strong><p>Le proposte inviate compariranno in questa area.</p><button class="button button-outline" data-view="client" data-request-type="Progetto">＋ Registra un progetto</button></div></section>
+				</section>
+
+				<section class="view" id="view-appointments">
+					<div class="page-heading"><div><p class="eyebrow">AGENDA ASSISTENZA</p><h1>Prenotazioni</h1><p class="page-subtitle">Organizza gli interventi e aggiorna gli orari concordati.</p></div><span class="agenda-date" id="agenda-date"></span></div>
+					<div class="appointment-list" id="appointment-list"></div>
+					<div class="empty-state panel hidden" id="appointments-empty"><span class="empty-icon">▦</span><strong>L’agenda è libera</strong><p>Puoi fissare una data mentre registri una nuova segnalazione.</p><button class="button button-primary" data-view="client">＋ Nuova segnalazione</button></div>
+				</section>
+
+				<section class="view" id="view-assistant">
+					<div class="page-heading"><div><p class="eyebrow">SUPPORTO AL TEAM</p><h1>Assistente tecnico</h1><p class="page-subtitle">Diagnosi iniziali e proposte basate sugli slot liberi dell’agenda.</p></div><span class="assistant-mode" id="assistant-mode">Modalità locale</span></div>
+					<div class="assistant-layout">
+						<section class="panel assistant-chat">
+							<div class="assistant-chat-heading"><span class="assistant-spark">✳</span><div><strong>Pronto a dare una mano</strong><small>Non inserire password o dati sensibili.</small></div></div>
+							<div class="assistant-messages" id="assistant-messages" aria-live="polite"><div class="chat-message assistant-message">Posso aiutarti a valutare un guasto o trovare i prossimi orari disponibili.</div></div>
+							<form class="assistant-form" id="assistant-form"><label class="sr-only" for="assistant-question">Scrivi una domanda</label><textarea id="assistant-question" rows="2" maxlength="1000" placeholder="Es. Quali orari sono liberi? Come verifico un PC lento?" required></textarea><button class="button button-primary" type="submit" aria-label="Invia domanda">Invia <span>→</span></button></form>
+							<p class="assistant-disclaimer">Le risposte sono indicative. Le prenotazioni diventano effettive solo quando le salvi nell’agenda.</p>
+						</section>
+						<aside class="panel assistant-prompts"><p class="eyebrow">DOMANDE RAPIDE</p><button class="prompt-button" data-question="Proponi i prossimi orari disponibili per un intervento.">Trova orari liberi <span>↗</span></button><button class="prompt-button" data-question="Come posso diagnosticare un PC lento in modo sicuro?">PC lento: primi controlli <span>↗</span></button><button class="prompt-button" data-question="Quali controlli fare se un PC non si avvia?">PC che non si avvia <span>↗</span></button><div class="assistant-note"><strong>Trasparenza</strong><span>Con la configurazione iniziale l’assistente usa regole locali. Puoi collegare un servizio AI compatibile dal file .env.</span></div></aside>
+					</div>
+				</section>
+
+				<section class="view" id="view-client">
+					<div class="client-layout">
+						<div class="client-intro"><p class="eyebrow" id="request-eyebrow">AREA SERVIZI</p><h1 id="request-heading">Segnala un guasto.</h1><p id="request-description">Descrivi il problema e il team assistenza prenderà in carico la richiesta.</p><div class="service-note"><span class="service-dot"></span><div><strong>Un servizio, più percorsi</strong><span>Guasti, bug, supporto e proposte di progetto arrivano al team giusto.</span></div></div></div>
+						<section class="form-panel">
+							<div class="form-heading"><div><p class="eyebrow">NUOVA RICHIESTA</p><h2>Segnala un problema</h2></div><span class="required-note">* Campi obbligatori</span></div>
+							<form id="ticket-form">
+								<div class="form-grid">
+									<label class="full-width">Tipo di richiesta<select name="requestType" id="request-type"><option>Guasto</option><option>Bug</option><option>Progetto</option><option>Supporto</option></select></label>
+									<label>Nome e cognome <span>*</span><input name="customerName" required maxlength="100" placeholder="Es. Giulia Rossi" /></label>
+									<label>Email o telefono <span>*</span><input name="contact" required maxlength="150" placeholder="Come possiamo contattarti?" /></label>
+									<label class="full-width" id="device-field">Dispositivo interessato <span class="required-marker">*</span><input name="device" required maxlength="120" placeholder="Es. PC ufficio, modello o numero inventario" /></label>
+									<label id="category-field">Tipo di problema<select name="category"><option>Computer / PC</option><option>Stampante</option><option>Rete e connessione</option><option>Software</option><option>Account e accessi</option><option>Altro</option></select></label>
+									<label>Urgenza<select name="priority"><option>Normale</option><option>Bassa</option><option>Alta</option><option>Urgente</option></select></label>
+									<label class="full-width" id="title-field">Titolo del problema <span class="required-marker">*</span><input name="title" required maxlength="140" placeholder="Es. Il PC non si avvia" /></label>
+									<label class="full-width">Descrizione <span>*</span><textarea name="description" required maxlength="2000" rows="4" placeholder="Descrivi l’errore e cosa stavi facendo quando è comparso."></textarea></label>
+									<div class="form-section-label full-width">APPUNTAMENTO <span>Facoltativo</span></div>
+									<label>Data preferita<input name="appointmentDate" type="date" /></label>
+									<label>Orario preferito<input name="appointmentTime" type="time" /></label>
+									<label class="full-width">Invia a<select name="assignedTo"><option>Assistente</option><option>Amministratore</option></select></label>
+								</div>
+								<div class="form-footer"><p>I dati verranno usati per gestire la tua richiesta.</p><button class="button button-primary" id="submit-ticket" type="submit">Invia segnalazione <span>→</span></button></div>
+								<p class="form-message" id="form-message" role="status" aria-live="polite"></p>
+							</form>
+							<div class="success-panel hidden" id="success-panel" role="status"><span class="success-mark">✓</span><p class="eyebrow">RICHIESTA REGISTRATA</p><h2>È arrivata al team.</h2><p>Conserva il codice della segnalazione per ogni riferimento.</p><strong class="ticket-reference" id="ticket-reference"></strong><button class="button button-outline" id="new-ticket-button">Invia un’altra segnalazione</button></div>
+						</section>
+					</div>
+				</section>
+				<footer class="app-footer"><span>ProntoDesk</span><span>Gestione assistenza tecnica</span></footer>
+			</main>
+		</div>
+		<div class="modal-backdrop hidden" id="login-modal" role="presentation">
+			<section class="login-dialog" role="dialog" aria-modal="true" aria-labelledby="login-title">
+				<button type="button" class="modal-close" id="login-close" aria-label="Chiudi">×</button>
+				<span class="brand-mark login-mark">p.</span>
+				<p class="eyebrow">AREA RISERVATA</p><h2 id="login-title">Accesso amministratore</h2><p class="login-description">Entra per gestire segnalazioni e prenotazioni.</p>
+				<form id="login-form"><label>Nome utente<input name="username" autocomplete="username" required /></label><label>Password<input name="password" type="password" autocomplete="current-password" required /></label><p class="login-error" id="login-error" role="alert"></p><button class="button button-primary login-submit" type="submit">Accedi <span>→</span></button></form>
+			</section>
+		</div>
+	</body>
+</html>
